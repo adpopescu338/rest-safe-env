@@ -1,0 +1,58 @@
+#root {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.approval-shell {
+  display: grid;
+  gap: 0.75rem;
+  color: #1f2937;
+  font-family: 'Avenir Next', 'Segoe UI', sans-serif;
+  background: #f8fafc;
+  border: 1px solid #dbe4ef;
+  border-radius: 0.65rem;
+  padding: 1rem;
+}
+
+.approval-shell h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.approval-shell p {
+  margin: 0;
+}
+
+.approval-shell code {
+  font-family: 'SF Mono', 'Menlo', monospace;
+  background: #e2e8f0;
+  border-radius: 0.35rem;
+  padding: 0.1rem 0.35rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.6rem;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+}
+
+.status-text {
+  color: #0f172a;
+}
+
+.error-text {
+  color: #991b1b;
+}
+
+@media (max-width: 620px) {
+  .actions {
+    justify-content: stretch;
+  }
+
+  .actions button {
+    flex: 1;
+  }
+}
