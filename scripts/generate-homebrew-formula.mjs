@@ -21,10 +21,7 @@ if (!version || typeof version !== 'string') {
 
 const formulaFileName = args.formulaName ?? `${stripScope(packageName)}.rb`
 const formulaClassName = toFormulaClassName(stripScope(packageName))
-const outputFormulaPath = path.resolve(
-  repoRootPath,
-  args.output ?? path.join('brew', 'Formula', formulaFileName)
-)
+const outputFormulaPath = args.output ? path.resolve(repoRootPath, args.output) : null
 
 const npmMetadataUrl = `https://registry.npmjs.org/${encodeURIComponent(packageName).replaceAll(
   '%40',
@@ -68,9 +65,16 @@ const formulaContents = renderFormula({
   binName: 'rse',
 })
 
-await mkdir(path.dirname(outputFormulaPath), { recursive: true })
-await writeFile(outputFormulaPath, formulaContents, 'utf8')
-console.log(`[rse] wrote Homebrew formula: ${outputFormulaPath}`)
+if (outputFormulaPath) {
+  await mkdir(path.dirname(outputFormulaPath), { recursive: true })
+  await writeFile(outputFormulaPath, formulaContents, 'utf8')
+  console.log(`[rse] wrote Homebrew formula: ${outputFormulaPath}`)
+} else if (!args.tapDir) {
+  const defaultOutputFormulaPath = path.resolve(repoRootPath, path.join('brew', 'Formula', formulaFileName))
+  await mkdir(path.dirname(defaultOutputFormulaPath), { recursive: true })
+  await writeFile(defaultOutputFormulaPath, formulaContents, 'utf8')
+  console.log(`[rse] wrote Homebrew formula: ${defaultOutputFormulaPath}`)
+}
 
 if (args.tapDir) {
   const tapDirPath = path.resolve(repoRootPath, args.tapDir)
@@ -181,10 +185,11 @@ function renderFormula({ className, desc, homepage, url, sha256, license, binNam
   depends_on "node"
 
   def install
-    libexec.install Dir["package/*"]
-    (bin/"${escapeRubyString(binName)}").write_exec_script libexec/"bin/${escapeRubyString(
+    source_dir = Dir.exist?("package") ? "package" : "."
+    libexec.install Dir["#{source_dir}/*"]
+    bin.install_symlink libexec/"bin/${escapeRubyString(binName)}.js" => "${escapeRubyString(
       binName
-    )}.js"
+    )}"
   end
 
   test do
