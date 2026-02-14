@@ -1,0 +1,58 @@
+{
+  "name": "rest-safe-env-vscode",
+  "displayName": "rest-safe-env",
+  "description": "Quickly launch rest-safe-env for .env files from VS Code Explorer.",
+  "version": "0.1.0",
+  "publisher": "adpopescu338",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adpopescu338/rest-safe-env.git",
+    "directory": "vscode-extension"
+  },
+  "homepage": "https://github.com/adpopescu338/rest-safe-env/tree/main/vscode-extension",
+  "bugs": {
+    "url": "https://github.com/adpopescu338/rest-safe-env/issues"
+  },
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:restSafeEnv.viewEnv"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "restSafeEnv.viewEnv",
+        "title": "View with rest-safe-env"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "restSafeEnv.viewEnv",
+          "when": "resourceFilename =~ /^\\.env(\\..+)?$/",
+          "group": "navigation@9"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p .",
+    "watch": "tsc -p . -w",
+    "devhost": "npm run compile && code --new-window --user-data-dir /tmp/rse-vscode-user --extensions-dir /tmp/rse-vscode-ext --disable-extension github.vscode-github-actions --extensionDevelopmentPath \"$PWD\" ..",
+    "package": "npx @vscode/vsce package",
+    "package:vsix": "npm run compile && npx @vscode/vsce package --out rest-safe-env.vsix",
+    "publish": "npx @vscode/vsce publish"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.57",
+    "@types/vscode": "^1.90.0",
+    "@vscode/vsce": "^3.6.2",
+    "typescript": "^5.9.3"
+  }
+}

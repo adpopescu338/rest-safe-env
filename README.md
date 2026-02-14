@@ -40,6 +40,14 @@ brew install rest-safe-env
 brew install rse
 ```
 
+### VS Code extension (optional)
+
+Install extension `adpopescu338.rest-safe-env-vscode` to add a right-click action on `.env` files (`View with rest-safe-env`) that launches `rse view` for the selected file.
+
+```bash
+code --install-extension adpopescu338.rest-safe-env-vscode
+```
+
 ## Usage
 
 ```bash
