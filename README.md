@@ -51,6 +51,8 @@ code --install-extension adpopescu338.rest-safe-env-vscode
 ## Usage
 
 ```bash
+rse --help
+rse --version
 rse view [envFilePath]
 rse import [envFilePath]
 rse run [envFilePath] -- <command...>
