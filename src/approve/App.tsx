@@ -993,11 +993,7 @@ async function runRegistration(token: string): Promise<void> {
   const extensionResults = credential.getClientExtensionResults() as {
     prf?: { results?: { first?: ArrayBuffer } }
   }
-
   const prfOutput = extensionResults.prf?.results?.first
-  if (!prfOutput) {
-    throw new Error('This authenticator does not support PRF output required by rest-safe-env.')
-  }
 
   const publicKeyBuffer = getRegistrationPublicKey(attestationResponse)
 
@@ -1006,7 +1002,7 @@ async function runRegistration(token: string): Promise<void> {
     publicKeySpki: arrayBufferToBase64(publicKeyBuffer),
     clientDataJSON: arrayBufferToBase64(attestationResponse.clientDataJSON),
     attestationObject: arrayBufferToBase64(attestationResponse.attestationObject),
-    prfOutput: arrayBufferToBase64(prfOutput),
+    prfOutput: prfOutput ? arrayBufferToBase64(prfOutput) : undefined,
   }
 
   const response = await fetch('/api/register/response', {
@@ -1117,9 +1113,6 @@ async function runUnlock(token: string, ticket: UnlockRequestResponse): Promise<
   }
 
   const prfOutput = extensionResults.prf?.results?.first
-  if (!prfOutput) {
-    throw new Error('This authenticator does not support PRF output required by rest-safe-env.')
-  }
 
   const payload: UnlockResponseRequest = {
     id: assertionCredential.id,
@@ -1129,7 +1122,7 @@ async function runUnlock(token: string, ticket: UnlockRequestResponse): Promise<
     userHandle: assertionResponse.userHandle
       ? arrayBufferToBase64(assertionResponse.userHandle)
       : undefined,
-    prfOutput: arrayBufferToBase64(prfOutput),
+    prfOutput: prfOutput ? arrayBufferToBase64(prfOutput) : undefined,
   }
 
   const response = await fetch('/api/unlock/response', {

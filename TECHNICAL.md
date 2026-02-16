@@ -8,11 +8,14 @@ This document covers architecture, security model, development workflow, and pac
 - Browser with:
   - WebAuthn (`PublicKeyCredential`)
   - User verification support (biometric/passkey/platform authenticator)
-  - PRF extension support (`prf` / `hmac-secret` path)
+  - PRF extension support (`prf` / `hmac-secret`) OR macOS Keychain fallback
 - Local loopback networking available (`127.0.0.1`)
 - WebAuthn origin/RP checks served on `http://localhost:<port>`
 
-If PRF is unavailable, plaintext editing can still work, but encrypted operations fail with explicit errors.
+If PRF is unavailable:
+
+- on macOS, encrypted operations can continue via Keychain-backed KEK fallback
+- on other platforms, encrypted operations still require PRF support
 
 ## Developer Setup
 
@@ -101,8 +104,11 @@ Quoted values are decoded for UI/runtime behavior while raw formatting can be pr
 
 - One local master key per install
 - Master key stored wrapped
-- KEK derived from WebAuthn PRF output
+- KEK provider is selected at registration:
+  - WebAuthn PRF-derived KEK (preferred)
+  - macOS Keychain-stored KEK (fallback when PRF output is unavailable)
 - Unlock verifies WebAuthn challenge/origin/type/RP hash/UV/signature/sign counter
+- Unlock then unwraps the master key via the credential's configured KEK provider
 - Decryption performed server-side (Node), not browser-side
 
 ### Local State Paths

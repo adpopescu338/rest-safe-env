@@ -16,7 +16,7 @@ import {
   readCredentialSummary,
   registerCredentialAndMasterKey,
   updateCredentialSignCount,
-  unwrapMasterKeyFromPrfOutput,
+  unwrapMasterKey,
 } from './credential-store'
 import { decryptEnvValue, encryptEnvValue } from './env-crypto'
 import {
@@ -1115,7 +1115,7 @@ async function handleUnlockResponse(
       await updateCredentialSignCount(signCount)
     }
 
-    context.unlockedMasterKey = await unwrapMasterKeyFromPrfOutput(payload.prfOutput)
+    context.unlockedMasterKey = await unwrapMasterKey(credential, payload.prfOutput)
     context.pendingUnlock = null
 
     const body: UnlockResponse = { ok: true }
@@ -1614,13 +1614,12 @@ function validateRegisterResponsePayload(payload: RegisterResponseRequest): void
     !payload.id ||
     !payload.publicKeySpki ||
     !payload.clientDataJSON ||
-    !payload.attestationObject ||
-    !payload.prfOutput
+    !payload.attestationObject
   ) {
     throw new SessionApiError(
       400,
       'invalid_registration_payload',
-      'id, publicKeySpki, clientDataJSON, attestationObject, and prfOutput are required.'
+      'id, publicKeySpki, clientDataJSON, and attestationObject are required.'
     )
   }
 }
@@ -1634,13 +1633,12 @@ function validateUnlockResponsePayload(payload: UnlockResponseRequest): void {
     !payload.id ||
     !payload.clientDataJSON ||
     !payload.authenticatorData ||
-    !payload.signature ||
-    !payload.prfOutput
+    !payload.signature
   ) {
     throw new SessionApiError(
       400,
       'invalid_unlock_payload',
-      'id, clientDataJSON, authenticatorData, signature, and prfOutput are required.'
+      'id, clientDataJSON, authenticatorData, and signature are required.'
     )
   }
 }

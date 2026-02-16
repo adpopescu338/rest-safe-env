@@ -74,7 +74,7 @@ export type RegisterResponseRequest = {
   publicKeySpki: string
   clientDataJSON: string
   attestationObject: string
-  prfOutput: string
+  prfOutput?: string
 }
 
 export type RegisterResponse = {
@@ -95,7 +95,7 @@ export type UnlockResponseRequest = {
   authenticatorData: string
   signature: string
   userHandle?: string
-  prfOutput: string
+  prfOutput?: string
 }
 
 export type UnlockResponse = {
